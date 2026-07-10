@@ -6,6 +6,8 @@ const pool = new Pool({
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
   database: process.env.PGDATABASE,
+  // RDS exige TLS por defecto; el Postgres local de docker-compose no lo usa.
+  ssl: process.env.PGSSL === 'true' ? { rejectUnauthorized: false } : false,
 });
 
 async function withRetry(fn, { retries = 10, delayMs = 2000 } = {}) {

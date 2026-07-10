@@ -117,9 +117,7 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: |
-            ${{ steps.tags.outputs.backend-image }}
-            ${{ steps.ecr-login.outputs.registry }}/${{ vars.ECR_BACKEND_REPO }}:latest
+          tags: ${{ steps.tags.outputs.backend-image }}
 
       - name: Build & push frontend
         uses: docker/build-push-action@v6
@@ -128,9 +126,7 @@ jobs:
           push: true
           build-args: |
             VITE_API_URL=http://${{ vars.ALB_DNS }}
-          tags: |
-            ${{ steps.tags.outputs.frontend-image }}
-            ${{ steps.ecr-login.outputs.registry }}/${{ vars.ECR_FRONTEND_REPO }}:latest
+          tags: ${{ steps.tags.outputs.frontend-image }}
 
   deploy:
     name: Deploy a ECS Fargate

@@ -9,14 +9,15 @@
   "containerDefinitions": [
     {
       "name": "backend",
-      "image": "430659715185.dkr.ecr.us-east-1.amazonaws.com/eft-devops-backend:latest",
+      "image": "430659715185.dkr.ecr.us-east-1.amazonaws.com/eft-devops-backend:fix-pgssl",
       "portMappings": [{ "containerPort": 3000, "protocol": "tcp" }],
       "essential": true,
       "environment": [
         { "name": "PORT", "value": "3000" },
         { "name": "PGHOST", "value": "eft-devops-db.cmeh64hm76he.us-east-1.rds.amazonaws.com" },
         { "name": "PGPORT", "value": "5432" },
-        { "name": "PGDATABASE", "value": "eft_db" }
+        { "name": "PGDATABASE", "value": "eft_db" },
+        { "name": "PGSSL", "value": "true" }
       ],
       "secrets": [
         { "name": "PGUSER", "valueFrom": "arn:aws:secretsmanager:us-east-1:430659715185:secret:eft-devops/db-credentials-w3kNZN:username::" },
