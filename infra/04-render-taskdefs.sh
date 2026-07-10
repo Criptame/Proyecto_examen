@@ -4,6 +4,7 @@
 # archivos SI se commitean al repo: no contienen secretos, solo ARNs/DNS/
 # nombres, y son la base que usa el pipeline de CI/CD para desplegar (solo
 # reemplaza el tag de imagen en cada corrida).
+export MSYS_NO_PATHCONV=1
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./00-config.env

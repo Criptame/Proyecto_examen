@@ -5,6 +5,7 @@
 # configurado en las task definitions (grupos /ecs/${PROJECT}-backend y
 # /ecs/${PROJECT}-frontend), y Container Insights ya quedo habilitado al
 # crear el cluster en 05-ecs-deploy.sh.
+export MSYS_NO_PATHCONV=1
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./00-config.env

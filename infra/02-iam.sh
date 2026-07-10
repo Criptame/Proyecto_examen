@@ -8,6 +8,7 @@
 # ya existente "LabRole" para ambos roles de ECS y omite la creacion del
 # usuario dedicado, indicando que hay que usar las credenciales temporales
 # de la propia sesion del Lab (ver mensaje final).
+export MSYS_NO_PATHCONV=1
 set -uo pipefail
 cd "$(dirname "$0")"
 source ./00-config.env

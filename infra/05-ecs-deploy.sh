@@ -5,6 +5,7 @@
 # 04-render-taskdefs.sh, y haber publicado al menos una imagen en cada
 # repositorio ECR (la primera vez puede hacerse a mano con docker push, o
 # disparando el workflow de GitHub Actions con workflow_dispatch).
+export MSYS_NO_PATHCONV=1
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./00-config.env

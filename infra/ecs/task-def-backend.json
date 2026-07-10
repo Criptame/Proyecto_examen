@@ -1,0 +1,36 @@
+{
+  "family": "eft-devops-backend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::430659715185:role/LabRole",
+  "taskRoleArn": "arn:aws:iam::430659715185:role/LabRole",
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "430659715185.dkr.ecr.us-east-1.amazonaws.com/eft-devops-backend:latest",
+      "portMappings": [{ "containerPort": 3000, "protocol": "tcp" }],
+      "essential": true,
+      "environment": [
+        { "name": "PORT", "value": "3000" },
+        { "name": "PGHOST", "value": "eft-devops-db.cmeh64hm76he.us-east-1.rds.amazonaws.com" },
+        { "name": "PGPORT", "value": "5432" },
+        { "name": "PGDATABASE", "value": "eft_db" }
+      ],
+      "secrets": [
+        { "name": "PGUSER", "valueFrom": "arn:aws:secretsmanager:us-east-1:430659715185:secret:eft-devops/db-credentials-w3kNZN:username::" },
+        { "name": "PGPASSWORD", "valueFrom": "arn:aws:secretsmanager:us-east-1:430659715185:secret:eft-devops/db-credentials-w3kNZN:password::" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/eft-devops-backend",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "backend",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ]
+}

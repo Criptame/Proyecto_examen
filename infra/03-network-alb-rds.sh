@@ -5,6 +5,7 @@
 # tareas Fargate reciben IP publica solo para salir a ECR/CloudWatch/Secrets
 # Manager, y quedan protegidas por Security Groups restrictivos (no por estar
 # en subred privada). RDS no tiene IP publica.
+export MSYS_NO_PATHCONV=1
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./00-config.env

@@ -2,6 +2,7 @@
 # Habilita auto scaling (target tracking por CPU) en el servicio backend,
 # para demostrar el beneficio de ECS frente a un despliegue manual en EC2:
 # el numero de tareas sube/baja solo segun la carga real.
+export MSYS_NO_PATHCONV=1
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./00-config.env

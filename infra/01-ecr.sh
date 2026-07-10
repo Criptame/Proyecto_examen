@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Crea los repositorios ECR (frontend y backend) con escaneo de vulnerabilidades
 # al hacer push y una lifecycle policy que conserva solo las ultimas 10 imagenes.
+export MSYS_NO_PATHCONV=1
 set -euo pipefail
 source "$(dirname "$0")/00-config.env"
 

@@ -1,0 +1,26 @@
+{
+  "family": "eft-devops-frontend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::430659715185:role/LabRole",
+  "taskRoleArn": "arn:aws:iam::430659715185:role/LabRole",
+  "containerDefinitions": [
+    {
+      "name": "frontend",
+      "image": "430659715185.dkr.ecr.us-east-1.amazonaws.com/eft-devops-frontend:latest",
+      "portMappings": [{ "containerPort": 80, "protocol": "tcp" }],
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/eft-devops-frontend",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "frontend",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 # Elimina TODO lo creado por los scripts 01-07, en orden inverso, para dejar
 # de pagar despues de grabar el video y rendir el examen. Pide confirmacion
 # antes de borrar nada. No falla si algo ya no existe (idempotente).
+export MSYS_NO_PATHCONV=1
 set -euo pipefail
 cd "$(dirname "$0")"
 source ./00-config.env
