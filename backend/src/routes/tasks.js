@@ -1,5 +1,6 @@
 const express = require('express');
 const { pool } = require('../db');
+const { isValidTitle } = require('../validators');
 
 const router = express.Router();
 
@@ -17,8 +18,8 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     const { title } = req.body;
-    if (!title || !title.trim()) {
-      return res.status(400).json({ error: 'title es requerido' });
+    if (!isValidTitle(title)) {
+      return res.status(400).json({ error: 'title es requerido y debe tener entre 1 y 255 caracteres' });
     }
     const { rows } = await pool.query(
       'INSERT INTO tasks (title) VALUES ($1) RETURNING id, title, done, created_at',
