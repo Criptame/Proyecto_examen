@@ -9,7 +9,7 @@
   "containerDefinitions": [
     {
       "name": "frontend",
-      "image": "430659715185.dkr.ecr.us-east-1.amazonaws.com/eft-devops-frontend:latest",
+      "image": "430659715185.dkr.ecr.us-east-1.amazonaws.com/eft-devops-frontend:fix-health-route",
       "portMappings": [{ "containerPort": 80, "protocol": "tcp" }],
       "essential": true,
       "logConfiguration": {

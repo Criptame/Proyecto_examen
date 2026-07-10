@@ -10,14 +10,21 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-app.get('/health', async (req, res) => {
+const healthHandler = async (req, res) => {
   try {
     await pool.query('SELECT 1');
     res.json({ status: 'ok', db: 'up' });
   } catch (err) {
     res.status(503).json({ status: 'degraded', db: 'down' });
   }
-});
+};
+
+// /health: usado por el healthcheck del contenedor y el target group de ECS
+// (pegan directo al puerto del backend, no pasan por el ALB).
+// /api/health: usado por el frontend en el navegador, porque el ALB solo
+// enruta el path /api/* hacia el backend (ver infra/03-network-alb-rds.sh).
+app.get('/health', healthHandler);
+app.get('/api/health', healthHandler);
 
 app.use('/api/tasks', tasksRouter);
 

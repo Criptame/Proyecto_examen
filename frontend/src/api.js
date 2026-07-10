@@ -13,7 +13,7 @@ async function request(path, options = {}) {
   return res.json();
 }
 
-export const getHealth = () => request('/health');
+export const getHealth = () => request('/api/health');
 export const listTasks = () => request('/api/tasks');
 export const createTask = (title) =>
   request('/api/tasks', { method: 'POST', body: JSON.stringify({ title }) });

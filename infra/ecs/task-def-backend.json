@@ -9,7 +9,7 @@
   "containerDefinitions": [
     {
       "name": "backend",
-      "image": "430659715185.dkr.ecr.us-east-1.amazonaws.com/eft-devops-backend:fix-pgssl",
+      "image": "430659715185.dkr.ecr.us-east-1.amazonaws.com/eft-devops-backend:fix-health-route",
       "portMappings": [{ "containerPort": 3000, "protocol": "tcp" }],
       "essential": true,
       "environment": [
