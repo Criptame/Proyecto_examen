@@ -72,6 +72,16 @@ Definido en [`.github/workflows/ci-cd.yml`](.github/workflows/ci-cd.yml):
 
 Se dispara en cada push a `main` y también admite ejecución manual (`workflow_dispatch`) para demos.
 
+Configuración requerida en GitHub (**Settings → Secrets and variables → Actions**):
+
+| Tipo     | Nombre                                            | Origen                                    |
+|----------|----------------------------------------------------|--------------------------------------------|
+| Secret   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`        | `infra/02-iam.sh` (usuario `*-github-actions`) |
+| Variable | `AWS_REGION`                                        | `infra/00-config.env`                      |
+| Variable | `ECR_BACKEND_REPO`, `ECR_FRONTEND_REPO`             | `<PROJECT>-backend` / `<PROJECT>-frontend` |
+| Variable | `ECS_CLUSTER`, `ECS_SERVICE_BACKEND`, `ECS_SERVICE_FRONTEND` | `infra/05-ecs-deploy.sh`         |
+| Variable | `ALB_DNS`                                            | salida de `infra/03-network-alb-rds.sh`    |
+
 ## Infraestructura AWS
 
 Ver [`infra/README.md`](infra/README.md) para el detalle paso a paso (VPC/Security Groups, ECR, ECS
