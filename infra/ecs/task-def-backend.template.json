@@ -1,0 +1,36 @@
+{
+  "family": "${PROJECT}-backend-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "${EXEC_ROLE_ARN}",
+  "taskRoleArn": "${TASK_ROLE_ARN}",
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${PROJECT}-backend:latest",
+      "portMappings": [{ "containerPort": 3000, "protocol": "tcp" }],
+      "essential": true,
+      "environment": [
+        { "name": "PORT", "value": "3000" },
+        { "name": "PGHOST", "value": "${RDS_ENDPOINT}" },
+        { "name": "PGPORT", "value": "5432" },
+        { "name": "PGDATABASE", "value": "${DB_NAME}" }
+      ],
+      "secrets": [
+        { "name": "PGUSER", "valueFrom": "${DB_SECRET_ARN}:username::" },
+        { "name": "PGPASSWORD", "valueFrom": "${DB_SECRET_ARN}:password::" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/${PROJECT}-backend",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "backend",
+          "awslogs-create-group": "true"
+        }
+      }
+    }
+  ]
+}
