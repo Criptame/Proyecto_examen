@@ -38,6 +38,24 @@ Internet
 **Nunca pegues tus credenciales de AWS en un chat, IA o issue.** Todos los pasos que generan
 credenciales (IAM access key) se ejecutan en tu propia terminal.
 
+### Si usas AWS Academy (Learner Lab)
+
+Los scripts detectan automáticamente esta situación en `02-iam.sh`, pero conviene saberlo de antemano:
+
+- **No se pueden crear roles ni usuarios IAM.** `02-iam.sh` detecta el `AccessDenied` y usa el rol ya
+  existente `LabRole` tanto para el "execution role" como para el "task role" de ECS (ese rol ya trae
+  permisos amplios, así que normalmente no hace falta agregarle nada).
+- **No hay un usuario IAM dedicado para GitHub Actions.** En su lugar, usa las credenciales
+  *temporales* de tu propia sesión del Lab: en el panel del Learner Lab, botón **AWS Details → AWS CLI**,
+  copia `aws_access_key_id`, `aws_secret_access_key` y `aws_session_token`, y pégalos tú mismo (nunca
+  en un chat) como GitHub Secrets `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` y `AWS_SESSION_TOKEN`.
+- **Esas credenciales expiran junto con la sesión del Lab** (típicamente ~4 horas, o al reiniciarla).
+  Actualiza los 3 secrets en GitHub antes de volver a correr el pipeline o de grabar el video si ha
+  pasado tiempo desde la última vez que iniciaste el Lab.
+- El Lab normalmente fuerza una región fija (revisa cuál es la tuya) y tiene un presupuesto acotado:
+  la arquitectura de este proyecto (sin NAT Gateway, RDS `db.t3.micro`, 1-3 tareas Fargate pequeñas)
+  está pensada para mantenerse dentro de ese margen durante una sesión de trabajo/grabación.
+
 ## Orden de ejecución
 
 ```bash
@@ -58,9 +76,12 @@ export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output tex
 
 En este punto:
 1. Sube (`git add/commit/push`) los `task-def-*.json` generados.
-2. Configura los **GitHub Secrets** del repo (ver `.github/workflows/ci-cd.yml`): credenciales del
-   usuario IAM creado en `02-iam.sh` (`aws iam create-access-key --user-name <PROJECT>-github-actions`,
-   ejecutado por ti, no por la IA) y el resto de variables (cluster, servicios, ALB DNS).
+2. Configura los **GitHub Secrets** del repo (ver `.github/workflows/ci-cd.yml`):
+   - Cuenta normal: credenciales del usuario IAM creado en `02-iam.sh`
+     (`aws iam create-access-key --user-name <PROJECT>-github-actions`, ejecutado por ti).
+   - AWS Academy: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` y `AWS_SESSION_TOKEN` de tu sesión del
+     Learner Lab (ver sección de arriba).
+   - En ambos casos, agrega también las **GitHub Variables** (cluster, servicios, repos ECR, ALB DNS).
 3. Dispara el pipeline (push a `main` o `workflow_dispatch`) para que construya y publique las
    primeras imágenes en ECR — **antes** de crear los servicios ECS, porque `create-service` necesita
    que la imagen ya exista en el repositorio.

@@ -76,11 +76,14 @@ Configuración requerida en GitHub (**Settings → Secrets and variables → Act
 
 | Tipo     | Nombre                                            | Origen                                    |
 |----------|----------------------------------------------------|--------------------------------------------|
-| Secret   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`        | `infra/02-iam.sh` (usuario `*-github-actions`) |
+| Secret   | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`        | `infra/02-iam.sh` (usuario `*-github-actions`), o tu sesión de AWS Academy |
+| Secret   | `AWS_SESSION_TOKEN`                                 | Solo si usas AWS Academy Learner Lab (credenciales temporales, expiran ~4h) |
 | Variable | `AWS_REGION`                                        | `infra/00-config.env`                      |
 | Variable | `ECR_BACKEND_REPO`, `ECR_FRONTEND_REPO`             | `<PROJECT>-backend` / `<PROJECT>-frontend` |
 | Variable | `ECS_CLUSTER`, `ECS_SERVICE_BACKEND`, `ECS_SERVICE_FRONTEND` | `infra/05-ecs-deploy.sh`         |
 | Variable | `ALB_DNS`                                            | salida de `infra/03-network-alb-rds.sh`    |
+
+> Si usas AWS Academy, revisa la sección dedicada en [`infra/README.md`](infra/README.md).
 
 ## Infraestructura AWS
 

@@ -2,6 +2,10 @@ name: CI/CD
 
 # Requiere, en Settings > Secrets and variables > Actions del repo:
 #   Secrets:   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY   (usuario IAM creado en infra/02-iam.sh)
+#              AWS_SESSION_TOKEN (solo si se usa AWS Academy Learner Lab;
+#              dejar el secret vacio/con cualquier valor si no aplica - ver
+#              infra/README.md. En Academy expira con la sesion del Lab y
+#              hay que actualizarlo antes de cada corrida nueva)
 #   Variables: AWS_REGION, ECR_BACKEND_REPO, ECR_FRONTEND_REPO,
 #              ECS_CLUSTER, ECS_SERVICE_BACKEND, ECS_SERVICE_FRONTEND, ALB_DNS
 # Ver infra/README.md para como se obtienen esos valores.
@@ -91,6 +95,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Login en Amazon ECR
@@ -141,6 +146,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ vars.AWS_REGION }}
 
       - name: Render task definition - backend
