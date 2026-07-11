@@ -1,87 +1,117 @@
-# Guion y checklist — Presentación y defensa (EFT ISY1101)
+# Guion de grabación — Presentación y defensa (EFT ISY1101)
 
-Duración objetivo: **10 a 15 minutos**. Grabar con OBS Studio, Xbox Game Bar (`Win+G`) o Zoom en
-grabación local. Se recomienda grabar en una sola toma siguiendo este orden; si algo falla, cortar y
-retomar desde el inicio de esa sección (no hace falta repetir todo).
+Guion definitivo, sincronizado con `docs/presentacion.pptx` (10 diapositivas) y con el estado real
+del proyecto ya desplegado. Duración objetivo: **10 a 13 minutos**. Cada bloque dice: qué diapositiva
+mostrar, qué decir (idea, no para leer palabra por palabra — que suene natural), y a qué pantalla
+cambiar y qué señalar ahí.
 
-Antes de grabar, tener abiertas y listas estas pestañas/terminales (evita tiempos muertos buscando):
+**Datos reales de tu proyecto** (para no tener que buscarlos en vivo):
+- Repo: `https://github.com/Criptame/Proyecto_examen`
+- App en producción: `http://eft-devops-alb-1572070739.us-east-1.elb.amazonaws.com`
+- Cluster ECS: `eft-devops-cluster` · Servicios: `eft-devops-backend-svc`, `eft-devops-frontend-svc`
+- RDS: `eft-devops-db` (PostgreSQL)
 
-1. Terminal en la raíz del repo con `docker compose up --build` ya probado (para no esperar builds en vivo).
-2. VS Code (o editor) con `backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml` y
-   `.github/workflows/ci-cd.yml` abiertos en pestañas.
-3. GitHub: página del repositorio (Code, branches, historial de commits) y la pestaña **Actions** con
-   la última corrida exitosa del pipeline abierta.
-4. AWS Consola: Amazon ECR (repos con las imágenes y sus tags), ECS (cluster, servicios, tareas),
-   EC2 → Load Balancers (target groups en estado "healthy"), CloudWatch (logs y dashboard).
-5. El navegador apuntando a `http://<ALB_DNS>` (la app funcionando en la nube).
+## Antes de grabar: dejar todo abierto en pestañas (evita tiempos muertos)
 
----
+1. **`docs/presentacion.pptx`** abierto en PowerPoint, en modo presentación, en un monitor/ventana.
+2. **Navegador** con estas pestañas ya cargadas:
+   - `http://eft-devops-alb-1572070739.us-east-1.elb.amazonaws.com` (la app en producción)
+   - `https://github.com/Criptame/Proyecto_examen` (repo)
+   - `https://github.com/Criptame/Proyecto_examen/blob/main/.github/workflows/ci-cd.yml`
+   - Consola AWS: ECS (cluster `eft-devops-cluster`), RDS (`eft-devops-db`), EC2 → Security Groups
+3. **Editor** (VS Code) con `backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml` abiertos.
+4. **Terminal** con `docker compose up --build` ya corrido una vez (para no esperar el build en vivo).
 
-## 0. Apertura (30-45 s)
-
-> "Hola, somos [nombres]. Esta es la defensa de nuestro proyecto de la EFT de Introducción a
-> Herramientas DevOps: un sistema de gestión de tareas con frontend en React, backend en Node/Express
-> y base de datos PostgreSQL, con todo el ciclo de integración y despliegue automatizado con GitHub
-> Actions hacia AWS."
-
-## 1. Repositorio (1 min) — checklist: URL, ramas, commits
-
-- Mostrar la URL del repositorio (pantalla completa, que se lea).
-- Abrir el historial de commits: señalar que están agrupados por etapa lógica (scaffold de la app,
-  contenerización, pipeline CI/CD, infraestructura AWS, documentación) con mensajes descriptivos.
-- Mencionar brevemente la estructura de carpetas (`backend/`, `frontend/`, `infra/`, `.github/workflows/`).
-
-## 2. Contenedores (2.5-3 min) — checklist: Dockerfile, docker-compose
-
-- Abrir `backend/Dockerfile`: explicar las dos etapas (`deps` instala dependencias, `runtime` copia
-  solo lo necesario), la imagen base `node:20-alpine` (minimalista) y el usuario no-root.
-- Abrir `frontend/Dockerfile`: explicar que compila con Node y sirve con `nginx:alpine`, y el
-  `build-arg VITE_API_URL` que fija en tiempo de build a qué backend apunta el frontend.
-- Mostrar `docker-compose.yml`: la red interna, el healthcheck de la base de datos y la dependencia
-  `condition: service_healthy` antes de levantar el backend.
-- **Demo en vivo**: en la terminal, `docker compose up --build` (o mostrar que ya está corriendo) y
-  abrir `http://localhost:5173` en el navegador — agregar una tarea nueva para mostrar que el CRUD
-  funciona end-to-end contra la base de datos local.
-
-## 3. Pipeline de CI/CD (3-3.5 min) — checklist: workflow, secretos, ECR, logs
-
-- Abrir `.github/workflows/ci-cd.yml` y recorrer los 3 jobs en voz alta:
-  - `build-and-test`: instala dependencias, corre las pruebas unitarias del backend, compila el
-    frontend, construye ambas imágenes y las escanea con Trivy.
-  - `push`: se autentica en ECR con credenciales guardadas como *GitHub Secret* (mostrar la sección
-    Settings → Secrets and variables, **sin revelar los valores**) y publica las imágenes con dos tags
-    (SHA del commit y `latest`).
-  - `deploy`: actualiza las task definitions de ECS y espera a que el despliegue quede estable.
-- Cambiar a la pestaña **Actions** de GitHub: mostrar una corrida completa en verde, entrar a los logs
-  de al menos un job (por ejemplo `push`) para que se vea la publicación real en ECR.
-- Cambiar a la consola de AWS → ECR: mostrar los repositorios `eft-devops-frontend` y
-  `eft-devops-backend` con las imágenes y sus tags (destacar el tag por SHA que coincide con el commit
-  recién mostrado en GitHub).
-
-## 4. Despliegue y orquestación en AWS (3.5-4 min) — checklist: endpoints activos, clúster, arquitectura
-
-- Abrir el navegador en `http://<ALB_DNS>` y mostrar la app funcionando **en la nube** (agregar una
-  tarea para demostrar que también escribe en RDS).
-- Consola AWS → ECS: mostrar el cluster `eft-devops-cluster`, los 2 servicios corriendo (frontend y
-  backend) y sus tareas activas.
-- Mostrar la configuración de auto scaling del servicio backend (Application Auto Scaling, target
-  60% CPU, 1 a 3 tareas) y explicar en qué se traduce: si sube la carga, ECS agrega tareas solo.
-- EC2 → Load Balancers → Target Groups: mostrar los targets en estado "healthy".
-- Explicar con el diagrama de arquitectura (`docs/architecture.png`) cómo interactúan los servicios:
-  ALB enruta por path (`/` al frontend, `/api/*` al backend), el backend habla con RDS por el puerto
-  5432 solo desde su Security Group, y los Secrets/credenciales viven en Secrets Manager, no en el código.
-- CloudWatch: mostrar el dashboard con métricas (CPU/memoria de los servicios, requests del ALB) y los
-  grupos de logs `/ecs/eft-devops-backend` y `/ecs/eft-devops-frontend`.
-
-## 5. Cierre (30 s)
-
-> "Con esto automatizamos todo el ciclo: cada push a main prueba, construye, publica y despliega solo,
-> sobre una infraestructura con buenas prácticas de seguridad y con capacidad de escalar sin
-> intervención manual. Quedamos atentos a las preguntas."
+> ⚠️ El pipeline de GitHub Actions tiene ahora mismo una corrida en rojo (falla al resolver la acción
+> `aquasecurity/trivy-action@0.24.0`, un tag que no existe). Si no lo arreglas antes de grabar, **no
+> muestres una corrida en vivo fallando** — muestra el archivo `.github/workflows/ci-cd.yml` y explica
+> los 3 jobs conceptualmente (ver bloque 5). Si prefieres arreglarlo antes de grabar, es cambiar esa
+> versión por una que exista (por ejemplo `@0.24.1` o `@master`) en el workflow.
 
 ---
 
-## Preguntas frecuentes de defensa técnica (preparar respuesta propia, no leer)
+## Bloque 0 — Diapositiva 1 (Portada) · 20-30 s
+
+*Dejas la diapositiva de portada en pantalla mientras hablas.*
+
+> "Hola, soy Guillermo Santander. Esta es la defensa de mi proyecto de la Evaluación Final Transversal
+> de Introducción a Herramientas DevOps: automaticé el ciclo completo de integración y entrega continua
+> de una plataforma web de tres capas, desplegada en AWS."
+
+## Bloque 1 — Diapositiva 2 (El proyecto) · 45-60 s
+
+- Lee en voz alta las 4 ideas clave de la slide (contenedores, pipeline, infraestructura real, seguridad).
+- Señala el diagrama de 3 capas de la derecha: "Frontend en React, Backend en Node/Express, base de
+  datos PostgreSQL — se comunican por HTTP y TCP dentro de una red interna."
+
+## Bloque 2 — Diapositiva 3 (Arquitectura) · 1-1.5 min
+
+- Explica el diagrama completo: entorno local (docker-compose) a la izquierda, GitHub en el medio,
+  AWS Cloud a la derecha.
+- Menciona las 3 cajas de abajo: un solo ALB con enrutamiento por path (evita CORS), RDS sin IP pública.
+
+## Bloque 3 — Diapositiva 4 (Contenedores) + demo local · 2-2.5 min
+
+- Repasa la slide: build multietapa, imágenes alpine, usuario no-root, healthchecks.
+- **Cambia a VS Code**: muestra `backend/Dockerfile` (señala las etapas `deps` y `runtime`), luego
+  `frontend/Dockerfile` (build con Node, runtime con nginx), luego `docker-compose.yml` (red interna,
+  `condition: service_healthy`).
+- **Demo en vivo**: cambia a la terminal, muestra que el stack está corriendo (`docker compose ps`),
+  abre `http://localhost:5173` en el navegador, agrega una tarea nueva — "esto confirma que el CRUD
+  funciona contra la base de datos local".
+
+## Bloque 4 — Diapositiva 5 (Pipeline CI/CD) · 2-2.5 min
+
+- Repasa los 3 pasos de la slide (Build & Test, Push a ECR, Deploy a ECS).
+- **Cambia al navegador**, pestaña del archivo `.github/workflows/ci-cd.yml` en GitHub: desplázate
+  por los 3 jobs mientras explicas qué hace cada uno (usa las mismas palabras de la slide).
+- Señala la sección de secretos: "las credenciales de AWS viven en GitHub Secrets, nunca en el código".
+- *(Si ya arreglaste el bug de Trivy antes de grabar)*: cambia a la pestaña **Actions** y muestra una
+  corrida en verde, entra a los logs del job `push` para mostrar la publicación real en ECR.
+
+## Bloque 5 — Diapositiva 6 (Infraestructura AWS) · 2-2.5 min
+
+- Repasa la lista de la slide (VPC sin NAT, ALB, ECS Fargate, RDS sin IP pública, auto scaling).
+- **Cambia a la consola de AWS**:
+  - ECS → cluster `eft-devops-cluster` → muestra los 2 servicios corriendo y sus tareas activas.
+  - RDS → `eft-devops-db` → muestra el estado "Disponible".
+  - EC2 → Security Groups → `eft-devops-rds-sg` → muestra que solo acepta tráfico desde el Security
+    Group del backend (sin abrir nada a Internet).
+
+## Bloque 6 — Diapositiva 7 (Seguridad) · 1-1.5 min
+
+- Repasa las 6 tarjetas (mínimo privilegio, secretos gestionados, red segmentada, imágenes
+  minimalistas, tags inmutables, TLS a la base de datos) — no hace falta volver a cambiar de pantalla,
+  esta slide se sostiene sola si ya mostraste el Security Group en el bloque anterior.
+
+## Bloque 7 — Diapositiva 8 (Evidencia) + demo en la nube · 1.5-2 min
+
+- **Cambia al navegador**, pestaña de la app en producción: `http://eft-devops-alb-1572070739.us-east-1.elb.amazonaws.com`.
+  Agrega una tarea nueva ahí — "esto ya no es local, está escribiendo en RDS a través del backend en Fargate".
+- Cambia a la pestaña del repositorio en GitHub, muestra que es público y el historial de commits.
+
+## Bloque 8 — Diapositiva 9 (Desafíos reales) · 1.5-2 min
+
+*Esta es la slide más fuerte para la nota — cuenta la historia con confianza, no como un error sino
+como evidencia de que probaste en un entorno real:*
+
+> "Durante el despliegue real encontré dos problemas que no aparecían en local. El primero: el backend
+> fallaba en bucle porque RDS exige conexión cifrada por defecto y mi driver no la tenía activada — lo
+> vi en los logs de CloudWatch, y lo arreglé activando SSL condicionalmente, solo quedaba encendido en
+> AWS, no en local. El segundo: el frontend decía 'sin conexión' porque el Load Balancer solo enruta
+> `/api/*` al backend, y el chequeo de salud pegaba directo a `/health`, que caía en el nginx del
+> frontend en vez del backend. Lo corregí exponiendo también `/api/health` en el backend y apuntando
+> el frontend ahí. Ambos se corrigieron y redesplegaron sin bajar el servicio."
+
+## Bloque 9 — Diapositiva 10 (Conclusiones) · 30-40 s
+
+> "En resumen: automaticé todo el camino de un commit a producción, sin pasos manuales, sobre una
+> arquitectura pensada en costo y seguridad, y la validé funcionando de verdad en una cuenta real de
+> AWS. Gracias — quedo atento a las preguntas."
+
+---
+
+## Preguntas frecuentes de defensa técnica (prepara tu propia respuesta, no leas esto en voz alta)
 
 - **¿Por qué RDS y no un contenedor de Postgres en producción?** Persistencia fuera del ciclo de vida
   de las tareas, backups automáticos y parches gestionados por AWS; el enunciado solo exige contenedor
@@ -95,8 +125,12 @@ Antes de grabar, tener abiertas y listas estas pestañas/terminales (evita tiemp
   detectan como "unhealthy" y ECS la reemplaza automáticamente (mínimo privilegio + auto-recuperación).
 - **¿Por qué Fargate y no EC2?** No hay servidores que parchear/escalar manualmente; se paga por tarea
   en ejecución y el auto scaling ajusta la cantidad de tareas según CPU.
+- **¿Cómo encontraste los dos bugs de producción?** Revisando los logs de CloudWatch del backend
+  (`/ecs/eft-devops-backend`), que mostraban el error exacto de Postgres y, en el segundo caso,
+  probando el endpoint manualmente con curl a través del ALB.
 - **¿Qué se haría distinto en un entorno real de producción?** HTTPS con certificado ACM en el ALB,
   autenticación del pipeline por OIDC en vez de access keys de larga duración, y pruebas de integración
   automatizadas antes del deploy.
 - **¿Cómo se asegura la trazabilidad entre un commit y lo desplegado?** El tag de imagen en ECR es el
-  SHA del commit; el job de deploy usa ese tag exacto, no "latest".
+  SHA del commit (los repositorios tienen tags inmutables, no se usa "latest"); el job de deploy usa
+  siempre ese tag exacto.
